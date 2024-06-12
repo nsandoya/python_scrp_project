@@ -1,8 +1,10 @@
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
+import re
 
 base_url = "http://coleguini.com/"
+category = "24-flats-y-deportivos"
 
 def get_data(url):
     response = requests.get(url)
@@ -13,15 +15,17 @@ def get_data(url):
         # En caso de error, responder:
         raise Exception(f"Failed to get data from: {url}. Try again later. Atte: Coleguini ;)")
 
-def scape_several_pages(base_url, categoria):
+def scape_several_pages(base_url, category):
     items = []
     page = 1
+    parsed_category = regex_help(category)
+
     while True:
        url = ""
-       url = f"{base_url}{categoria}?page={page}"
+       url = f"{base_url}{category}?page={page}"
        print("url", url)
        new_items = get_data(url)
-       parsed_items = parse_product(new_items)
+       parsed_items = parse_product(new_items, parsed_category)
        """ if not new_items:
            break """
        if page == 5:
@@ -34,7 +38,7 @@ def scape_several_pages(base_url, categoria):
     return pd.DataFrame(items)
     #return items
 
-def parse_product(products):
+def parse_product(products, category):
     soup = BeautifulSoup(products.text, "html.parser")
     itemsList = []
 
@@ -51,7 +55,7 @@ def parse_product(products):
             name = name_element.get_text(strip=True)
             price = price_element.get_text(strip=True)
             #print("Zapatos",{name, price})
-            itemsList.append({"name": name, "price": price}) # De esta forma sí estoy generando una lista de diccionarios, en vez de una lista de tuplas
+            itemsList.append({"name": name, "price": price, "category": category}) # De esta forma sí estoy generando una lista de diccionarios, en vez de una lista de tuplas
     
         # Control de flujo
         if not name_element or not price_element:
@@ -60,14 +64,32 @@ def parse_product(products):
 
     return itemsList
 
+def regex_help(string):
+    pattern = r"(\d+)-(.*)"
+
+# Aplicar la regex para dividir el string
+    result = re.match(pattern, string)
+
+    if result:
+        # La primera parte es el número, la segunda parte es el resto del string
+        n = result.group(1)
+        category = result.group(2)
+        print("Número:", n)
+        print("Resto:", category)
+    else:
+        print("No se encontró el patrón en el texto.")
+
+    return category
+
 def process_data(items):
     processed_data = []
     for item in items: # Esto es un refactor para iterar en la lista de dicts y extraer datos por keys
         name = item.get("name", "Nombre no disponible")
         price = item.get("price", "Precio no disponible")
+        category = item.get("category", "Categoría no disponible")
         price = price.replace('\xa0$', "") 
         price = float(price.replace(",", ".")) # Convertir el str 'price' a decimal para luego poder analizar datos
-        processed_data.append({"Modelo": name, "Precio": price})
+        processed_data.append({"Modelo": name, "Precio": price, "Categoría": category})
 
     #print(f"Lista recibida:{books}")
     #print(f"Lista a exportar:{datos_procesados}")
@@ -78,8 +100,8 @@ def save_to_csv(df, file):
     to_save.to_csv(f"{file}.csv", index=False)
 
 
-data = scape_several_pages(base_url, "24-flats-y-deportivos")
-save_to_csv(data, 'data/raw/scraped_data')
+data = scape_several_pages(base_url, category)
+save_to_csv(data, 'data/raw/scraped_data_'+category)
 #parsed_data = parse_product(data)
 #processed_data = process_data(data)
 print(data)
