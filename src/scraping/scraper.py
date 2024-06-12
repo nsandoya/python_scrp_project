@@ -17,7 +17,7 @@ def get_data(url):
 
 @timethis
 @logthis
-def scape_several_pages(base_url, category):
+def scrape_several_pages(base_url, category):
     items = []
     page = 1
     parsed_category = regex_help(category)
@@ -30,7 +30,7 @@ def scape_several_pages(base_url, category):
        parsed_items = parse_product(new_items, parsed_category)
        """ if not new_items:
            break """
-       if page == 5:
+       if page == 2:
            break
        
        items.extend(parsed_items) # Junta la lista original con la nueva lista
@@ -85,8 +85,8 @@ def regex_help(string):
 
     return category
 
-@timethis
-@logthis
+""" @timethis
+@logthis """
 def process_data(items):
     processed_data = []
     for item in items: # Esto es un refactor para iterar en la lista de dicts y extraer datos por keys
@@ -100,16 +100,16 @@ def process_data(items):
     return processed_data
 
 
-def save_to(df, outout_path):
+def save_to(df, output_path):
     to_save = pd.DataFrame(df)
-    if outout_path.endswith(".csv"):
-        to_save.to_csv(f"{outout_path}", index=False)
-    elif outout_path.endswith(".xlsx"):
-        to_save.to_excel(f"{outout_path}", index=False)
+    if output_path.endswith(".csv"):
+        to_save.to_csv(f"{output_path}", index=False)
+    elif output_path.endswith(".xlsx"):
+        to_save.to_excel(f"{output_path}", index=False)
     else:
         raise ValueError("Wrong file format. Please try again")
     
-    print(f"Data saved to {outout_path}")
+    print(f"Data saved to {output_path}")
 
 
 if __name__ == "__main__":
@@ -119,6 +119,6 @@ if __name__ == "__main__":
     category = "336-tratamientos"
     output_path = f"data/processed/scraped_data_{category}.csv"
 
-    data = scape_several_pages(base_url+section, category)
+    data = scrape_several_pages(base_url+section, category)
     os.makedirs("data/processed/", exist_ok=True) # Crea el directorio si no existe
     save_to(data, output_path)
