@@ -17,20 +17,22 @@ def scape_several_pages(base_url, categoria):
     items = []
     page = 1
     while True:
-       #url = f"{url}/catalogue/page-{page}.html"
        url = ""
        url = f"{base_url}{categoria}?page={page}"
        print("url", url)
        new_items = get_data(url)
        parsed_items = parse_product(new_items)
-       """ if not nuevos_items:
+       """ if not new_items:
            break """
        if page == 5:
            break
+       
        items.extend(parsed_items) # Junta la lista original con la nueva lista
        page = page + 1
-    #print(items)
-    return items
+    
+    items = process_data(items)
+    return pd.DataFrame(items)
+    #return items
 
 def parse_product(products):
     soup = BeautifulSoup(products.text, "html.parser")
@@ -67,15 +69,17 @@ def process_data(items):
         price = float(price.replace(",", ".")) # Convertir el str 'price' a decimal para luego poder analizar datos
         processed_data.append({"Modelo": name, "Precio": price})
 
-        # Control de flujo (para mostrar solo los primeros 10)
-        """ if len(datos_procesados)>= 10:
-            break """
     #print(f"Lista recibida:{books}")
     #print(f"Lista a exportar:{datos_procesados}")
     return processed_data
 
+def save_to_csv(df, file):
+    to_save = pd.DataFrame(df)
+    to_save.to_csv(f"{file}.csv", index=False)
+
 
 data = scape_several_pages(base_url, "24-flats-y-deportivos")
+save_to_csv(data, 'data/raw/scraped_data')
 #parsed_data = parse_product(data)
-processed_data = process_data(data)
-print(processed_data)
+#processed_data = process_data(data)
+print(data)
