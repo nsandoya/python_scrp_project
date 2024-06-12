@@ -1,5 +1,6 @@
 import time
 import logging # Para registrar mensajes
+import pandas as pd
 
 # Configurar el registro de logs
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
@@ -24,3 +25,4 @@ def logthis(func):
         logging.info(f"Done {func.__name__}")  # Se registra el fin de la ejecución de la función original
         return result  # Retornamos el resultado de la función original
     return wrapper
+
