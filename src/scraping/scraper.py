@@ -5,7 +5,8 @@ import re
 import os # Interacción con el sistema operativo
 from ..decorators.decorators import timethis, logthis # Import de módulos internos: decoradores para loggin
 
-
+@timethis
+@logthis
 def get_data(url):
     response = requests.get(url)
     # Petición exitosa
@@ -25,12 +26,12 @@ def scrape_several_pages(base_url, category):
     while True:
        url = ""
        url = f"{base_url}{category}?page={page}"
-       print("url", url)
+       #print("url", url)
        new_items = get_data(url)
        parsed_items = parse_product(new_items, parsed_category)
        """ if not new_items:
            break """
-       if page == 2:
+       if page == 5:
            break
        
        items.extend(parsed_items) # Junta la lista original con la nueva lista
@@ -85,8 +86,8 @@ def regex_help(string):
 
     return category
 
-""" @timethis
-@logthis """
+@timethis
+@logthis
 def process_data(items):
     processed_data = []
     for item in items: # Esto es un refactor para iterar en la lista de dicts y extraer datos por keys

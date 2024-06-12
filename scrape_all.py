@@ -6,7 +6,7 @@ import os # Interacción con el sistema operativo
 from src.scraping.scraper import get_data, scrape_several_pages
 from src.decorators.decorators import timethis, logthis
 
-def save_to(df_nuevo, output_path):
+def seek_and_save_to(df_nuevo, output_path):
     # Lee el archivo CSV existente en un DataFrame
     if os.path.exists(output_path):
         # Si existe, lee el archivo CSV en un DataFrame
@@ -32,7 +32,7 @@ def save_to(df_nuevo, output_path):
 def scrape_all(base_url, category, category_list, output_path):
     for category in category_list:
         data = scrape_several_pages(base_url, category)
-        save_to(data, output_path)
+        seek_and_save_to(data, output_path)
 
 
 
