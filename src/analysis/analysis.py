@@ -33,7 +33,8 @@ def analyze_data(df):
 
 if __name__ == "__main__":
     base_url = "data/processed/scraped_data_"
-    category = "14-carteras"
+    #category = "14-carteras"
+    category = "336-tratamientos"
     data_path = f"{base_url}{category}.csv"
 
     df = load_data(data_path)
