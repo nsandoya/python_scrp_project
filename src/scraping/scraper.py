@@ -13,9 +13,10 @@ def get_data(url):
         return response
     else:
         # En caso de error, responder:
-        raise Exception(f"Failed to get data from: {url}. Try again later. Atte: Coleguini ;)")
+        raise Exception(f"Failed to get data from: {url}. Try again later. Atte: The scraper ;)")
 
-
+@timethis
+@logthis
 def scape_several_pages(base_url, category):
     items = []
     page = 1
@@ -43,12 +44,15 @@ def parse_product(products, category):
     soup = BeautifulSoup(products.text, "html.parser")
     itemsList = []
 
-    items = soup.select(".product-meta") # Selecciona todos los elementos que tengan esta clase
+   # items = soup.select(".product-meta") 
+    items = soup.select(".product_item") # Selecciona todos los elementos que tengan esta clase
     #print(items)
     # Pase de selección, html tags
     for item in items:
-        name_element = item.select_one(".p-name h3 a")
-        price_element = item.select_one(".p-price .product-price-and-shipping .price > span:nth-child(2)")
+        #name_element = item.select_one(".p-name h3 a")
+        name_element = item.select_one(".product-description h3 a")
+        #price_element = item.select_one(".p-price .product-price-and-shipping .price > span:nth-child(2)")
+        price_element = item.select_one(".product-price-and-shipping .price")
 
         # Comprobar que ambos elementos existan, antes de intentar usarlos
         if name_element and price_element:
@@ -75,26 +79,25 @@ def regex_help(string):
         # La primera parte es el número, la segunda parte es el resto del string
         n = result.group(1)
         category = result.group(2)
-        print("Número:", n)
-        print("Resto:", category)
+        #print("Número:", n)
+        print("Category:", category)
     else:
         print("No se encontró el patrón en el texto.")
 
     return category
 
-
+@timethis
+@logthis
 def process_data(items):
     processed_data = []
     for item in items: # Esto es un refactor para iterar en la lista de dicts y extraer datos por keys
         name = item.get("name", "Nombre no disponible")
         price = item.get("price", "Precio no disponible")
         category = item.get("category", "Categoría no disponible")
-        price = price.replace('\xa0$', "") 
+        #price = price.replace('\xa0$', "") 
+        price = price.strip("$ ")
         price = float(price.replace(",", ".")) # Convertir el str 'price' a decimal para luego poder analizar datos
         processed_data.append({"Modelo": name, "Precio": price, "Categoría": category})
-
-    #print(f"Lista recibida:{books}")
-    #print(f"Lista a exportar:{datos_procesados}")
     return processed_data
 
 
@@ -113,12 +116,12 @@ def save_to_csv(df, outout_path):
 
 
 if __name__ == "__main__":
-    base_url = "http://coleguini.com/"
-    category = "14-carteras"
+    #base_url = "https://coleguini.com/"
+    base_url = "https://www.dipaso.com.ec/cat/"
+    category = "336-tratamientos"
     output_path = f"data/processed/scraped_data_{category}.csv"
 
     data = scape_several_pages(base_url, category)
+
     os.makedirs("data/processed/", exist_ok=True) # Crea el directorio si no existe
     save_to_csv(data, output_path)
-
-    #print(data)

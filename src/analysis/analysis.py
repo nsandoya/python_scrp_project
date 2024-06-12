@@ -2,8 +2,8 @@ import pandas as pd
 import os # Interacción con el sistema operativo
 from ..decorators.decorators import timethis, logthis # Import de módulos internos: decoradores para loggin
 
-@logthis
 @timethis
+@logthis
 def load_data(data_path):
     if data_path.endswith(".csv"):
         df = pd.read_csv(data_path)
@@ -15,8 +15,8 @@ def load_data(data_path):
     print("File required for analysis: ✅")
     return df
 
-@logthis
 @timethis
+@logthis
 def analyze_data(df):
     # Análisis básico de los datos
     print("\n Productos: top 5, precios más altos")
