@@ -2,9 +2,8 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 import re
+import os # Interacción con el sistema operativo
 
-base_url = "http://coleguini.com/"
-category = "24-flats-y-deportivos"
 
 def get_data(url):
     response = requests.get(url)
@@ -95,13 +94,27 @@ def process_data(items):
     #print(f"Lista a exportar:{datos_procesados}")
     return processed_data
 
-def save_to_csv(df, file):
+def save_to_csv(df, outout_path):
     to_save = pd.DataFrame(df)
-    to_save.to_csv(f"{file}.csv", index=False)
+    if outout_path.endswith(".csv"):
+        to_save.to_csv(f"{outout_path}", index=False)
+    elif outout_path.endswith(".xlsx"):
+        to_save.to_excel(f"{outout_path}", index=False)
+    else:
+        raise ValueError("Wrong file format. Please try again")
+    
+    print(f"Data saved to {outout_path}")
 
 
-data = scape_several_pages(base_url, category)
-save_to_csv(data, 'data/raw/scraped_data_'+category)
-#parsed_data = parse_product(data)
-#processed_data = process_data(data)
-print(data)
+
+
+if __name__ == "__main__":
+    base_url = "http://coleguini.com/"
+    category = "14-carteras"
+    output_path = f"data/processed/scraped_data_{category}.csv"
+
+    data = scape_several_pages(base_url, category)
+    os.makedirs("data/processed/", exist_ok=True) # Crea el directorio si no existe
+    save_to_csv(data, output_path)
+
+    #print(data)
