@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import re
 import os # Interacción con el sistema operativo
+from ..decorators.decorators import timethis, logthis # Import de módulos internos: decoradores para loggin
 
 
 def get_data(url):
@@ -13,6 +14,7 @@ def get_data(url):
     else:
         # En caso de error, responder:
         raise Exception(f"Failed to get data from: {url}. Try again later. Atte: Coleguini ;)")
+
 
 def scape_several_pages(base_url, category):
     items = []
@@ -35,7 +37,7 @@ def scape_several_pages(base_url, category):
     
     items = process_data(items)
     return pd.DataFrame(items)
-    #return items
+
 
 def parse_product(products, category):
     soup = BeautifulSoup(products.text, "html.parser")
@@ -80,6 +82,7 @@ def regex_help(string):
 
     return category
 
+
 def process_data(items):
     processed_data = []
     for item in items: # Esto es un refactor para iterar en la lista de dicts y extraer datos por keys
@@ -93,6 +96,7 @@ def process_data(items):
     #print(f"Lista recibida:{books}")
     #print(f"Lista a exportar:{datos_procesados}")
     return processed_data
+
 
 def save_to_csv(df, outout_path):
     to_save = pd.DataFrame(df)
