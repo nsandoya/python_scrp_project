@@ -14,19 +14,22 @@ def load_data(data_path):
 
 def analyze_data(df):
     # Análisis básico de los datos
-    print("Basic data analysis/Summary:")
-    print(df.describe())
-    print("\n Products with highest prices:")
+    print("\n Productos: top 5, precios más altos")
     highest_prices = df.nlargest(5, "Precio")
     print(highest_prices)
     
+    print("\n")
+    
+    print(f"Precio promedio: ${df['Precio'].mean():.2f}")
+    print(f"Precio más alto: ${df['Precio'].max():.2f}")
+    print(f"Precio mínimo: ${df['Precio'].min():.2f}")
 
 
 
 if __name__ == "__main__":
-    data_path = "data/raw/scraped_data_"
+    base_url = "data/processed/scraped_data_"
     category = "14-carteras"
+    data_path = f"{base_url}{category}.csv"
 
     df = load_data(data_path)
     analyze_data(df)
-    os.makedirs()
