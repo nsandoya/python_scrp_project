@@ -15,7 +15,7 @@ from src.analysis.analysis import analyze_data, load_data
 from notebooks.export_notebook import export_notebook_to_html
 
 # CLI UI
-parser = argparse.ArgumentParser(description="This is a tool specially made for Dipaso ecommerce. You can extract data from there, analyze it and see brands, categories, prices and other market tendencies in a group of friendly stadistic graphics (in a Jupyter file).") # Se crea una instancia de clase
+parser = argparse.ArgumentParser(description="This is a tool specially made for Dipaso ecommerce website. You can extract data from there, analyze it and see keywords, brands, and categories frecuency, prices distribution and other market tendencies as well —all in a group of friendly stadistic tables and graphics (exported from a Jupyter notebook) :)") # Se crea una instancia de clase
 parser.add_argument("-go", default="s", help="Write 's' to scrape data, 'a' to analyze data, 'rw' to delete the existing data and scrape again, or 'j' to export an html file from notebook! :D. Ex: -go s, -go a, -go rw, -go j", type=str) # Creamos argumentos/parámetros
 args = parser.parse_args() # Se crea un objeto cuyas keys guardan los argumentos creados por nosotros (que luego serán los parámetros que el usuario ingrese)
 
