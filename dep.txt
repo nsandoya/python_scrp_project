@@ -4,3 +4,5 @@ requests
 matplotlib
 jupyterlab
 re
+seaborn
+nbconvert

@@ -29,16 +29,17 @@ def scrape_several_pages(base_url, category):
        #print("url", url)
        new_items = get_data(url)
        parsed_items = parse_product(new_items, parsed_category)
-       """ if not new_items:
-           break """
-       if page == 5:
+       if not new_items:
            break
+       """ if page == 5:
+           break """
        
        items.extend(parsed_items) # Junta la lista original con la nueva lista
        page = page + 1
     
     items = process_data(items)
     return pd.DataFrame(items)
+
 
 def parse_product(products, category):
     soup = BeautifulSoup(products.text, "html.parser")
@@ -60,7 +61,8 @@ def parse_product(products, category):
             name = name_element.get_text(strip=True)
             price = price_element.get_text(strip=True)
             #print("Zapatos",{name, price})
-            itemsList.append({"name": name, "price": price, "category": category}) # De esta forma sí estoy generando una lista de diccionarios, en vez de una lista de tuplas
+            brand = brand_filter(name)
+            itemsList.append({"name": name, "price": price, "category": category, "brand": brand}) # De esta forma sí estoy generando una lista de diccionarios, en vez de una lista de tuplas
     
         # Control de flujo
         if not name_element or not price_element:
@@ -86,6 +88,40 @@ def regex_help(string):
 
     return category
 
+def brand_filter(item):
+    brandList = [
+        "Mia Secret",
+        "Salon Line",
+        "Beauty Creations",
+        "L.A. Girl",
+        "Milani",
+        "Wahl",
+        "Maxybelt",
+        "Echos Line",
+        "Generation Makeup",
+        "L.A. Colors",
+        "MakeUp-Pro",
+        "Byotea",
+        "Glam Beauty",
+        "Dompel",
+        "Revuele",
+        "Prolux",
+        "Hot Tools",
+        "CBD",
+        "G9",
+        "The fruit lab",
+        "Staleks"
+]
+    # Función para asignar la marca al producto
+    # Iterar sobre la lista de marcas predefinidas y buscar coincidencias en el nombre del producto
+    for brand in brandList:
+        if brand.lower() in item.lower():
+            return brand
+    return "N/A"  # Si no se encuentra ninguna coincidencia, devolver None
+
+# Aplicar la función de asignar_marca a la columna 'Producto' y crear una nueva columna 'Marca'
+
+
 @timethis
 @logthis
 def process_data(items):
@@ -94,10 +130,11 @@ def process_data(items):
         name = item.get("name", "Nombre no disponible")
         price = item.get("price", "Precio no disponible")
         category = item.get("category", "Categoría no disponible")
+        brand = item.get("brand", "Marca no disponible")
         #price = price.replace('\xa0$', "") 
         price = price.strip("$ ")
         price = float(price.replace(",", ".")) # Convertir el str 'price' a decimal para luego poder analizar datos
-        processed_data.append({"Modelo": name, "Precio": price, "Categoría": category})
+        processed_data.append({"Modelo": name, "Precio": price, "Categoría": category, "Marca": brand})
     return processed_data
 
 

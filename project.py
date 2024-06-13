@@ -3,8 +3,9 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import re
 import os # Interacción con el sistema operativo
-from src.scraping.scraper import get_data, scrape_several_pages
 from src.decorators.decorators import timethis, logthis
+from src.scraping.scraper import get_data, scrape_several_pages
+from src.analysis.analysis import analyze_data
 
 def seek_and_save_to(df_nuevo, output_path):
     # Lee el archivo CSV existente en un DataFrame
@@ -18,23 +19,25 @@ def seek_and_save_to(df_nuevo, output_path):
         
         print(f"Data saved to {output_path}")
     else:
-        # Si el archivo no existe, guarda el nuevo DataFrame directamente en el archivo CSV
+        # Si el archivo no existe, guarda el nuevo DataFrame directamente en el archivo .csv
         to_save = pd.DataFrame(df_nuevo)
         if output_path.endswith(".csv"):
             to_save.to_csv(output_path, index=False)
         else:
             raise ValueError("Wrong file format. Please try again")
-        
-        print(f"Data saved to {output_path}")
+    
+    print(f"Data saved to {output_path}")
 
 @timethis
 @logthis
+
 def scrape_all(base_url, category, category_list, output_path):
     for category in category_list:
         data = scrape_several_pages(base_url, category)
         seek_and_save_to(data, output_path)
 
-
+def analyze_all(df):
+    analyze_data(df)
 
 
 if __name__ == "__main__":
