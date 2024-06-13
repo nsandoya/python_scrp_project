@@ -29,10 +29,10 @@ def scrape_several_pages(base_url, category):
        #print("url", url)
        new_items = get_data(url)
        parsed_items = parse_product(new_items, parsed_category)
-       if not new_items:
-           break
-       """ if page == 5:
+       """ if not new_items:
            break """
+       if page == 8:
+           break
        
        items.extend(parsed_items) # Junta la lista original con la nueva lista
        page = page + 1
