@@ -4,18 +4,29 @@ from src.decorators.decorators import timethis, logthis # Import de módulos int
 
 """ @timethis
 @logthis """
-def load_data(data_path):
-    if data_path.endswith(".csv"):
-        df = pd.read_csv(data_path)
-    #elif data_path.endswith(".xlsx"):
-        #df = pd.read_excel(data_path)
-        if not df:
-            raise FileNotFoundError("File does not exist. Try again")
-    else:
-        raise ValueError("Invalid file format")
+def load_data(data_path):   
+    #file_exists = file_exists(data_path)
+    try: 
+        if data_path.endswith(".csv"):
+            df = pd.read_csv(data_path)
+            #print(df)
+        #elif data_path.endswith(".xlsx"):
+            #df = pd.read_excel(data_path)
+            if df.empty:
+                raise FileNotFoundError("Scrape first ;) There's no file to analyze")  
+            
+        print("File required for analysis: ✅")          
+        return df
     
-    print("File required for analysis: ✅")
-    return df
+    except FileNotFoundError:
+        print(f"Scrape first ;) {data_path} does not exist.")
+        exit()
+    except ValueError:
+        print("Invalid file format. Probably the value of DataFrame has errors")
+        exit()
+    
+        
+    
 
 """ @timethis
 @logthis """
