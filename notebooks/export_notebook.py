@@ -10,6 +10,13 @@ from src.decorators.decorators import timethis, logthis
 @logthis
 def export_notebook_to_html(data_path, html_path):
     try:
+        ipynb_copy_path = "notebooks/explorations_modificado.ipynb"
+        if os.path.exists(html_path):
+            os.remove(html_path)
+            print(f"{html_path} has been removed. Now let's create an html from notebook again!")
+        if os.path.exists(ipynb_copy_path):
+            os.remove(ipynb_copy_path)
+            print(f"{ipynb_copy_path} has been removed. Now let's create an html from notebook again!")
         # Leer el contenido del archivo .ipynb
         with open(data_path, "r", encoding="utf-8") as f:
             contenido = f.read()
