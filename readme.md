@@ -2,7 +2,7 @@
 #### Python final project
 
 ##### Para instalar dependencias
-Escribir en la terminal: `pip install -r .\dep.txt`
+Escribir en la terminal: `pip install -r dep.txt`
 
 ##### Para ejecutar el programa/main file usando rutas relativas en CLI
 1. Verificar que estamos en la ruta raíz del proyecto
